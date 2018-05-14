@@ -1,0 +1,7 @@
+language: ruby
+script: "bundle exec rspec --format documentation"
+
+rvm:
+  - 2.2.9
+  - 2.3.6
+  - 2.4.3
