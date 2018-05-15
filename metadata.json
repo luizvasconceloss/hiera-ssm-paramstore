@@ -1,6 +1,6 @@
 {
   "name": "luizvasconceloss-hiera_ssm_paramstore",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Luiz Vasconcelos",
   "summary": "Hiera 5 backend to query data on AWS System Manager Parameter Store",
   "license": "Apache-2.0",
