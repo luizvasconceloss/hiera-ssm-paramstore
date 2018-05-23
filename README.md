@@ -1,4 +1,3 @@
-
 [![Build Status](https://travis-ci.org/luizvasconceloss/hiera-ssm-paramstore.svg?branch=master)](https://travis-ci.org/luizvasconceloss/hiera-ssm-paramstore)
 
 ## hiera_ssm_paramstore : AWS Systems Manager Parameter Store backend for Hiera 5
@@ -9,7 +8,7 @@ This is a backend function for Hiera 5 that allows to lookup keys (string and se
 
 ### Compatibility
 
-* It'ss only compatible with Hiera 5, present on Puppet 4.9+
+* It's only compatible with Hiera 5, present on Puppet 4.9+
 
 ### Requirements
 
@@ -20,7 +19,7 @@ The `aws-sdk-ssm` gem must be installed and loadable from Puppet
 # puppetserver gem install aws-sdk-ssm
 ```
 
-The server needs access to describe and get keys on AWS. You can use an `instance role` or configure authentication through `aws-cli`. The policy should look like:
+The server needs access to describe and get keys on AWS. You can use an `instance profile` or configure authentication through `aws-cli`. The policy should look like:
 
 ```
 {
@@ -28,13 +27,15 @@ The server needs access to describe and get keys on AWS. You can use an `instanc
     "Statement": [
         {
             "Sid": "Stmt1526212635512",
+            "Effect": "Allow",
             "Action": [
-                "ssm:DescribeParameters",
+                "ssm:GetParametersByPath",
                 "ssm:GetParameters"
             ],
-            "Effect": "Allow",
             "Resource": [
-                "arn:aws:ssm:us-east-1:*"
+                "arn:aws:ssm:us-east-1:*",
+                "arn:aws:ssm:us-east-2:*",
+                "arn:aws:ssm:*:*:parameter/*"
             ]
         }
     ]
@@ -43,7 +44,7 @@ The server needs access to describe and get keys on AWS. You can use an `instanc
 
 ### Installation
 
-Clone this repository into your modules path.
+Install directly via puppet or copy/clone to your modules directory
 
 ```
 # puppet module install luizvasconceloss-hiera_ssm_paramstore
@@ -53,7 +54,7 @@ Clone this repository into your modules path.
 
 See [The official Puppet documentation](https://docs.puppet.com/puppet/4.9/hiera_intro.html) for more details on configuring Hiera 5.
 
-The following is an example Hiera 5 hiera.yaml configuration:
+The following is an example of Hiera 5 hiera.yaml configuration:
 
 ```yaml
 ---
@@ -65,17 +66,25 @@ hierarchy:
     lookup_key: hiera_ssm_paramstore
     uris:
       - /
+      - /hiera/%{facts.os.family}/
     options:
       region: us-east-1
+      get_all: false
 ```
+
 
 #### Lookup options
 
 `region: ` : Specify what region should be used to query the keys/values, if not present will try to use a region configured on the server.
+`get_all` : Get all key under the path (uri) and cache it, should reduce the api call and avoid throttle. Default value: false
 
 #### Limitation
 
 AWS impose rate limit for API call, depending on the number of keys and nodes you can quickly reach those limits.
+
+#### Upgrading from version 0.1.x
+
+Requires to update the IAM policy to use the option get_all
 
 ### Author
 
