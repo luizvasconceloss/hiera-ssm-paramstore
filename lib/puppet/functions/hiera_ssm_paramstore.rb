@@ -12,11 +12,12 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
   end
 
   def lookup_key(key, options, context)
-    ssmclient = ssm_get_connection(options)
     key_path = context.interpolate(options['uri'] + key)
 
+    # Searches for key and key path due to ssm return just the key for keys on the root path (/)
+    # and the full path for the rest (/path/key)
     if options['get_all']
-      get_all_parameters(options, context, ssmclient)
+      get_all_parameters(options, context)
       if context.cache_has_key(key)
         context.explain { "Returning value for key #{key}" }
         return context.cached_value(key)
@@ -28,7 +29,7 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
         return context.not_found
       end
     else
-      result = paramstore_get(key, options, context, ssmclient)
+      result = get_parameter(key, options, context, key_path)
       return result
     end
   end
@@ -45,16 +46,16 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
     end
   end
 
-  def get_all_parameters(options, context, ssmclient)
+  def get_all_parameters(options, context)
     token = nil
     options['recursive'] ||= false
+    ssmclient = ssm_get_connection(options)
 
     loop do
       begin
         context.explain { "Getting keys on #{options['uri']} ..." }
         data = ssmclient.get_parameters_by_path({
           path: options['uri'],
-          recursive: options['recursive'],
           with_decryption: true,
           next_token: token
         })
@@ -69,12 +70,10 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
         raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message}"
       end
     end
-
-
   end
 
-  def paramstore_get(key, options, context, ssmclient)
-    key_path = context.interpolate(options['uri'] + key)
+  def get_parameter(key, options, context, key_path)
+    ssmclient = ssm_get_connection(options)
 
     if context.cache_has_key(key_path)
       context.explain { "Returning cached value for #{key_path}" }
