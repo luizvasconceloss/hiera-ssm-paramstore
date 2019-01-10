@@ -75,9 +75,9 @@ hierarchy:
 
 #### Lookup options
 
-`region: ` : Specify what region should be used to query the keys/values, if not present will try to use a region configured on the server.
-`get_all` : Get all key under the path (uri) and cache it, should reduce the api call and avoid throttle. Default value: false
-`recursive` : Get all keys using recursive mode. Default value: false
+`region: ` : Specify what region should be used to query the keys/values, if not present will try to use a region configured on the server.<br/>
+`get_all` : Get all key under the path (uri) and cache it, should reduce the api call and avoid throttle. Default value: false<br/>
+`recursive` : Get all keys using recursive mode. Default value: false<br/>
 
 #### Limitation
 
