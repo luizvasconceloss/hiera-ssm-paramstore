@@ -57,6 +57,7 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
         data = ssmclient.get_parameters_by_path({
           path: options['uri'],
           with_decryption: true,
+          recursive: options['recursive'],
           next_token: token
         })
         context.explain { "Adding keys on cache ..." }
