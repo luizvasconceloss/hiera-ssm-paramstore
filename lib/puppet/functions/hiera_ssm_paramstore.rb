@@ -17,7 +17,12 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
     # Searches for key and key path due to ssm return just the key for keys on the root path (/)
     # and the full path for the rest (/path/key)
     if options['get_all']
-      get_all_parameters(options, context)
+      if not context.cache_has_key('ssm_cached') 
+        context.explain { "No cache, caching..." } 
+        get_all_parameters(options, context) 
+      else 
+        context.explain { "Cache populated!!!" } 
+      end
       if context.cache_has_key(key)
         context.explain { "Returning value for key #{key}" }
         return context.cached_value(key)
@@ -64,6 +69,9 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
         data['parameters'].each do |k|
           context.cache(k['name'], k['value'])
         end
+        
+        context.explain { "Marking cache as populated" }
+        context.cache('ssm_cached', 'true')
 
         break if (data.next_token.nil?)
         token = data.next_token
