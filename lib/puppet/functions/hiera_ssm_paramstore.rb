@@ -23,7 +23,6 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
       else 
         context.explain { "Cache populated!!!" } 
       end
-      get_all_parameters(options, context)
       if context.cache_has_key(key)
         context.explain { "Returning value for key #{key}" }
         return context.cached_value(key)
