@@ -12,7 +12,7 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
   end
 
   def lookup_key(key, options, context)
-    key_path = context.interpolate(options['uri'] + key)
+    key_path = context.interpolate(options['uri'] + key.gsub('::', '/'))
 
     # Searches for key and key path due to ssm return just the key for keys on the root path (/)
     # and the full path for the rest (/path/key)
