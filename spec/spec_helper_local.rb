@@ -1,13 +1,9 @@
 class TF
-  def self.dispatch(name, &block)
-  end
+  def self.dispatch(*); end
 end
 
-
-module Puppet
-  module Functions
-    def self.create_function(name, &block)
-      TF.class_eval(&block)
-    end
+module Puppet::Functions
+  def self.create_function(_name, &block)
+    TF.class_eval(&block)
   end
 end

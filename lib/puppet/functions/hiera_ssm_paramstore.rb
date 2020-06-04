@@ -1,7 +1,7 @@
 Puppet::Functions.create_function(:hiera_ssm_paramstore) do
   begin
     require 'aws-sdk-ssm'
-  rescue LoadError => e
+  rescue LoadError
     raise Puppet::DataBinding::LookupError, 'Must install gem aws-sdk-ssm to use hiera_ssm_paramstore'
   end
 
