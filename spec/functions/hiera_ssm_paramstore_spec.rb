@@ -46,7 +46,7 @@ describe TF do # rubocop:disable RSpec/FilePath
         expect(function.lookup_key('region2', options, context)).to eq('ohio')
       end
 
-      it 'find another string' do
+      it 'find translate string' do
         expect(context).to receive(:interpolate).with('/plain/translate').and_return('/plain/translate')
         expect(function.lookup_key('plain::translate', options, context)).to eq('parameter_value')
       end
