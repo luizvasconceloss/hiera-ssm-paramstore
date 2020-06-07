@@ -7,38 +7,42 @@
   "source": "https://github.com/luizvasconceloss/hiera-ssm-paramstore",
   "project_page": "https://github.com/luizvasconceloss/hiera-ssm-paramstore",
   "issues_url": "https://github.com/luizvasconceloss/hiera-ssm-paramstore/issues",
-  "dependencies": [ ],
+  "dependencies": [
+
+  ],
   "operatingsystem_support": [
-  {
-    "operatingsystem": "RedHat",
-    "operatingsystemrelease": [
-      "6",
-      "7",
-      "8"
-    ]
-  },
-  {
-    "operatingsystem": "CentOS",
-    "operatingsystemrelease": [
-      "6",
-      "7",
-      "8"
-    ]
-  },
-  {
-    "operatingsystem": "Debian",
-    "operatingsystemrelease": [
-      "8",
-      "9",
-      "10"
-    ]
-  }
-],
-"requirements": [
-  {
-    "name": "puppet",
-    "version_requirement": ">= 4.9.0"
-  }
-],
-  "data_provider": null
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "6",
+        "7",
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "6",
+        "7",
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "8",
+        "9",
+        "10"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 4.9.0"
+    }
+  ],
+  "pdk-version": "1.18.0",
+  "template-url": "pdk-default#1.18.0",
+  "template-ref": "tags/1.18.0-0-g095317c"
 }

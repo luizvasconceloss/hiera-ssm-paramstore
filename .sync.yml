@@ -1,0 +1,12 @@
+.gitlab-ci.yml:
+  delete: true
+appveyor.yml:
+  delete: true
+
+Gemfile:
+  required:
+    ':development':
+      - gem: aws-sdk-ssm
+
+spec/spec_helper.rb:
+  mock_with: ':rspec'
