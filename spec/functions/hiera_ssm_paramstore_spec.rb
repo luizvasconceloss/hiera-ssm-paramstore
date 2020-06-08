@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spec_helper_functions'
 
 require 'puppet/functions/hiera_ssm_paramstore'
 
