@@ -8,15 +8,16 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
   dispatch :lookup_key do
     param 'Variant[String, Numeric]', :key
     param 'Hash', :options
-    param 'Puppet::LookupContext', :context
+    optional_param 'Puppet::LookupContext', :context
   end
 
-  def lookup_key(key, options, context)
-    key_path = context.interpolate(options['uri'] + key.gsub('::', '/'))
+  def lookup_key(key, options, context = nil)
+    key_path = options['uri'] + key.gsub('::', '/')
+    key_path = context.interpolate(key_path) if context
 
     # Searches for key and key path due to ssm return just the key for keys on the root path (/)
     # and the full path for the rest (/path/key)
-    if options['get_all']
+    if options['get_all'] && context
       if !context.cache_has_key('ssm_cached')
         context.explain { 'No cache, caching...' }
         get_all_parameters(options, context)
@@ -80,22 +81,24 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
   def get_parameter(_key, options, context, key_path)
     ssmclient = ssm_get_connection(options)
 
-    if context.cache_has_key(key_path)
+    if context && context.cache_has_key(key_path)
       context.explain { "Returning cached value for #{key_path}" }
       return context.cached_value(key_path)
     else
-      context.explain { "Looking for #{key_path}" }
+      context.explain { "Looking for #{key_path}" } if context
 
       begin
         resp = ssmclient.get_parameters(names: [key_path],
                                         with_decryption: true)
         if !resp.parameters.empty?
           value = resp.parameters[0].value
-          context.cache(key_path, value)
+          context.cache(key_path, value) if context
           return value
-        else
+        elsif context
           context.explain { "Key #{key_path} not found" }
           context.not_found
+        else
+          return nil
         end
       rescue Aws::SSM::Errors::ServiceError => e
         raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message}"
