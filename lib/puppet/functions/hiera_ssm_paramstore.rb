@@ -35,7 +35,7 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
         return context.not_found
       end
     else
-      result = get_parameter(key, options, context, key_path)
+      result = get_parameter(key_path, options, context)
       return result
     end
   end
@@ -78,7 +78,7 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
     end
   end
 
-  def get_parameter(_key, options, context, key_path)
+  def get_parameter(key_path, options, context)
     ssmclient = ssm_get_connection(options)
 
     if context && context.cache_has_key(key_path)
