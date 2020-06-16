@@ -13,12 +13,12 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore_write) do
 
   def write_key(key, value, options)
     key_path = options['uri'] + key.gsub('::', '/')
+    ssmclient = ssm_get_connection(options)
 
-    put_parameter(key_path, value, options)
+    put_parameter(key_path, value, options, ssmclient)
     # Fetch the newly created item. This both tests the creation and yields the result
     # in the expected format.
-    result = get_parameter(key_path, options)
-    return result
+    get_parameter(key_path, ssmclient)
   end
 
   def ssm_get_connection(options)
@@ -31,41 +31,33 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore_write) do
     raise Puppet::DataBinding::LookupError, "Fail to connect to aws ssm #{e.message}"
   end
 
-  def put_parameter(key_path, value, options)
-    ssmclient = ssm_get_connection(options)
+  def put_parameter(key_path, value, options, ssmclient)
     put_options = { name: key_path,
                     description: 'Added by hiera_ssm_paramstore_write',
                     value: value,
+                    type: 'String',
                     tags: [
                       {
-                        key: "CreatedBy",
-                        value: "puppet",
+                        key: 'CreatedBy',
+                        value: 'puppet',
                       },
-                    ],
-    }
+                    ] }
     put_options = put_options.merge(options['put']) if options['put']
 
     begin
-      resp = ssmclient.put_parameter(put_options)
+      ssmclient.put_parameter(put_options)
     rescue Aws::SSM::Errors::ServiceError => e
       raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message}"
     end
   end
 
-  def get_parameter(key_path, options)
-    ssmclient = ssm_get_connection(options)
+  def get_parameter(key_path, ssmclient)
+    resp = ssmclient.get_parameters(names: [key_path],
+                                    with_decryption: true)
 
-    begin
-      resp = ssmclient.get_parameters(names: [key_path],
-                                      with_decryption: true)
-      if !resp.parameters.empty?
-        value = resp.parameters[0].value
-        return value
-      else
-        return nil
-      end
-    rescue Aws::SSM::Errors::ServiceError => e
-      raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message}"
-    end
+    return nil if resp.parameters.empty?
+    resp.parameters[0].value
+  rescue Aws::SSM::Errors::ServiceError => e
+    raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message}"
   end
 end
