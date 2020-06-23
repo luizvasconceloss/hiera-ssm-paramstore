@@ -29,6 +29,7 @@ The server needs access to describe and get keys on AWS. You can use an `instanc
             "Sid": "Stmt1526212635512",
             "Effect": "Allow",
             "Action": [
+                "ssm:PutParameter", # -> only if you want write
                 "ssm:GetParametersByPath",
                 "ssm:GetParameters"
             ],
@@ -86,6 +87,25 @@ AWS impose rate limit for API call, depending on the number of keys and nodes yo
 #### Upgrading from version 0.1.x
 
 Requires to update the IAM policy to use the option get_all
+
+### As Puppet Functions
+
+This module now also supports reading and writing ssm parameters as puppet functions within pp files.
+
+```puppet
+$options = {
+  'uri'     => '/',
+  'region'  => 'us-east-1',
+  'get_all' => false,
+  'put'     => { 'description' => 'Added by hiera_ssm_paramstore_write' },
+}
+$ssm_w_value = hiera_ssm_paramstore_write('/my/param', 'value', $options)
+$ssm_r_value = hiera_ssm_paramstore('/my/param', $options)
+```
+
+#### Put options
+
+[All options listed here](https://docs.aws.amazon.com/sdk-for-ruby/v2/api/Aws/SSM/Client.html#put_parameter-instance_method)
 
 ### Author
 
