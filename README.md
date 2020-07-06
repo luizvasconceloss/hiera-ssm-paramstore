@@ -14,6 +14,12 @@ This is a backend function for Hiera 5 that allows to lookup keys (string and se
 
 The `aws-sdk-ssm` gem must be installed and loadable from Puppet
 
+#### Puppet install
+```puppet
+include 'hiera_ssm_paramstore'
+```
+
+#### CLI install
 ```
 # /opt/puppetlabs/puppet/bin/gem install aws-sdk-ssm
 # puppetserver gem install aws-sdk-ssm
