@@ -36,6 +36,7 @@ The server needs access to describe and get keys on AWS. You can use an `instanc
             "Effect": "Allow",
             "Action": [
                 "ssm:PutParameter", # -> only if you want write
+                "ssm:AddTagsToResource", # -> only if you want write tags
                 "ssm:GetParametersByPath",
                 "ssm:GetParameters"
             ],
