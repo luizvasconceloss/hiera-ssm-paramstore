@@ -47,7 +47,7 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore_write) do
     begin
       ssmclient.put_parameter(put_options)
     rescue Aws::SSM::Errors::ServiceError => e
-      raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message}"
+      raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message} with name: #{key_path}"
     end
   end
 
@@ -58,7 +58,7 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore_write) do
     return nil if resp.parameters.empty?
     resp.parameters[0].value
   rescue Aws::SSM::Errors::ServiceError => e
-    raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message}"
+    raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message} with names: [#{key_path}]"
   end
 
   def symbolize_keys(options)

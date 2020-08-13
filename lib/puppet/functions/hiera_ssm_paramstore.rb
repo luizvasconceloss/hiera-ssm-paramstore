@@ -73,7 +73,7 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
         break if data.next_token.nil?
         token = data.next_token
       rescue Aws::SSM::Errors::ServiceError => e
-        raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message}"
+        raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message} with path: #{options['uri']}"
       end
     end
   end
@@ -101,7 +101,7 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore) do
           return nil
         end
       rescue Aws::SSM::Errors::ServiceError => e
-        raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message}"
+        raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message} with names: [#{key_path}]"
       end
     end
   end
