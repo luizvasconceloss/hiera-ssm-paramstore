@@ -42,12 +42,12 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore_write) do
                         value: 'puppet',
                       },
                     ] }
-    put_options = put_options.merge(options['put']) if options['put']
+    put_options = put_options.merge(symbolize_keys(options['put'])) if options['put']
 
     begin
       ssmclient.put_parameter(put_options)
     rescue Aws::SSM::Errors::ServiceError => e
-      raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message}"
+      raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message} with name: #{key_path}"
     end
   end
 
@@ -58,6 +58,16 @@ Puppet::Functions.create_function(:hiera_ssm_paramstore_write) do
     return nil if resp.parameters.empty?
     resp.parameters[0].value
   rescue Aws::SSM::Errors::ServiceError => e
-    raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message}"
+    raise Puppet::DataBinding::LookupError, "AWS SSM Service error #{e.message} with names: [#{key_path}]"
+  end
+
+  def symbolize_keys(options)
+    options.each_with_object({}) do |(k, v), hash|
+      hash[k.to_sym] = if v.is_a?(Array)
+                         v.map { |t| t.is_a?(Hash) ? symbolize_keys(t) : t }
+                       else
+                         v
+                       end
+    end
   end
 end

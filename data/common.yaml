@@ -1,1 +1,2 @@
---- {}
+---
+hiera_ssm_paramstore::package_name: aws-sdk-ssm

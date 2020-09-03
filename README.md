@@ -14,6 +14,12 @@ This is a backend function for Hiera 5 that allows to lookup keys (string and se
 
 The `aws-sdk-ssm` gem must be installed and loadable from Puppet
 
+#### Puppet install
+```puppet
+include 'hiera_ssm_paramstore'
+```
+
+#### CLI install
 ```
 # /opt/puppetlabs/puppet/bin/gem install aws-sdk-ssm
 # puppetserver gem install aws-sdk-ssm
@@ -30,6 +36,7 @@ The server needs access to describe and get keys on AWS. You can use an `instanc
             "Effect": "Allow",
             "Action": [
                 "ssm:PutParameter", # -> only if you want write
+                "ssm:AddTagsToResource", # -> only if you want write tags
                 "ssm:GetParametersByPath",
                 "ssm:GetParameters"
             ],
