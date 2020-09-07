@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### 2020-09-07 - Release 1.0.0
-- Added support to read and write ssm parameters as puppet functions within pp files
+- Added support to read and write ssm parameters as puppet functions within pp files - thanks @edestecd
 
 ### 2020-05-07 - Release 0.3.0
 - Added support to translation when using `::` - thanks @ryan-dyer-sp
